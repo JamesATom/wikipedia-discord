@@ -6,12 +6,11 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "postinstall": "npm install -g yarn",
     "build": "nest build",
     "build:swc": "npx swc --out-dir dist -w src",
     "start:swc": "nodemon dist/main",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\" \"libs/**/*.ts\"",
-    "start": "yarn build && node dist/main",
+    "start": "npm run build && node dist/main",
     "start:dev": "concurrently \"npm run build:swc\" \"npm run start:swc\"",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
