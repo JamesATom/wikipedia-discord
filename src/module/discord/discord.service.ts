@@ -13,15 +13,9 @@ export class DiscordService implements OnModuleInit, OnModuleDestroy {
             GatewayIntentBits.Guilds,
             GatewayIntentBits.GuildMessages,
             GatewayIntentBits.DirectMessages,
-            GatewayIntentBits.MessageContent,
-            GatewayIntentBits.GuildMembers,
-            GatewayIntentBits.GuildPresences
+            GatewayIntentBits.MessageContent
         ],
-        partials: [
-            Partials.Channel,
-            Partials.Message,
-            Partials.User
-        ]
+        partials: [Partials.Channel]
     });
     private userLanguages = new Map<string, string>();
     private wikiStreamSubscriptions = new Map<string, Subscription>();
@@ -32,29 +26,14 @@ export class DiscordService implements OnModuleInit, OnModuleDestroy {
     ) {}
 
     async onModuleInit() {
-        if (!process.env.DISCORD_BOT_TOKEN) {
-            this.logger.error('DISCORD_BOT_TOKEN is not set');
-            return;
-        }
-        
         try {
             await this.client.login(process.env.DISCORD_BOT_TOKEN);
-    
+
             this.client.once('ready', () => {
                 this.logger.log(`Bot logged in as ${this.client.user.tag}`);
-                
-                // Set bot's presence
-                this.client.user.setPresence({
-                    status: 'online',
-                    activities: [{
-                        name: '!help for commands',
-                        type: 0 // Playing
-                    }]
-                });
-                
                 this.setupWikiStream();
             });
-    
+
             this.client.on('messageCreate', this.handleMessage.bind(this));
         } catch (error) {
             this.logger.error('Failed to initialize bot:', error);
