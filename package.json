@@ -6,6 +6,7 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
+    "postinstall": "npm install -g yarn",
     "build": "nest build",
     "build:swc": "npx swc --out-dir dist -w src",
     "start:swc": "nodemon dist/main",
