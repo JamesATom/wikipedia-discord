@@ -6,7 +6,7 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "build": "nest build",
+    "build": "export PATH=$(yarn bin):$PATH && nest build",
     "build:digitalocean": "yarn install --production=false && yarn run build && rm -rf node_modules && yarn install --production",
     "build:swc": "npx swc --out-dir dist -w src",
     "start:swc": "nodemon dist/main",
