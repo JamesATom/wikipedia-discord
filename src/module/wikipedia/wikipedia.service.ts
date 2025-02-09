@@ -57,7 +57,6 @@ export class WikipediaService implements OnModuleDestroy {
             };
 
             eventSource.onerror = (error) => {
-                this.logger.error(`EventSource error for ${lang}:`, error);
                 // Don't close on error, let the EventSource retry automatically
                 if (error.type === 'error') {
                     this.logger.log(`Connection lost for ${lang}, waiting for automatic reconnection...`);

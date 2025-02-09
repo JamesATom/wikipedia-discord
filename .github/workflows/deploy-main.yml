@@ -1,0 +1,42 @@
+name: Deploy Discord Bot
+
+on:
+  push:
+    paths:
+      - '/**'
+      - '.github/workflows/deploy-main.yml'
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18.x'
+
+    - name: Cache dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/yarn
+        key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-yarn-
+
+    - name: Install dependencies with Yarn (if cache miss)
+      if: steps.cache.outputs.cache-hit != 'true'
+      run: yarn install
+
+    - name: Check Node.js Version
+      run: node -v
+
+    - name: Build production code
+      run: yarn build:digitalocean
+
+    - name: Install doctl
+      uses: digitalocean/action-doctl@v2
+      with:
+        token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN_FOR_DISCORD_BOT }}
