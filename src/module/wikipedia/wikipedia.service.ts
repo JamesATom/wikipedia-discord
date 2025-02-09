@@ -25,16 +25,13 @@ export class WikipediaService implements OnModuleDestroy {
     constructor(private wikiStatsService: WikiStatsService) {}
 
     getStream(lang = 'en'): Observable<WikiEvent> {
-        // Return existing stream if available
         if (this.eventSubjects.has(lang)) {
             return this.eventSubjects.get(lang).asObservable();
         }
 
-        // Create new subject for this language
         const subject = new Subject<WikiEvent>();
         this.eventSubjects.set(lang, subject);
 
-        // Create EventSource if it doesn't exist
         if (!this.eventSourceMap.has(lang)) {
             const eventSource = new EventSource(this.WIKI_STREAM_URL, {
                 withCredentials: false,
@@ -57,7 +54,6 @@ export class WikipediaService implements OnModuleDestroy {
             };
 
             eventSource.onerror = (error) => {
-                // Don't close on error, let the EventSource retry automatically
                 if (error.type === 'error') {
                     this.logger.log(`Connection lost for ${lang}, waiting for automatic reconnection...`);
                 }
@@ -66,7 +62,6 @@ export class WikipediaService implements OnModuleDestroy {
             this.eventSourceMap.set(lang, eventSource);
         }
 
-        // Return shared observable that doesn't complete when unsubscribed
         return subject.asObservable().pipe(share());
     }
 
@@ -78,7 +73,6 @@ export class WikipediaService implements OnModuleDestroy {
         if (lang) {
             this.closeConnection(lang);
         } else {
-            // Cleanup all connections
             for (const [lang] of this.eventSourceMap) {
                 this.closeConnection(lang);
             }
@@ -106,7 +100,6 @@ export class WikipediaService implements OnModuleDestroy {
         if (events.length > 20) events.pop();
         this.recentEvents.set(lang, events);
     
-        // Track stats with additional user details
         await this.wikiStatsService.incrementDailyStats(
             lang,
             event.timestamp,
