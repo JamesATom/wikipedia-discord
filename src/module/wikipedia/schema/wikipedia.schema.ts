@@ -4,7 +4,10 @@ import { Document } from 'mongoose';
 
 export type WikiStatDocument = WikiStat & Document;
 
-@Schema({ timestamps: true })
+@Schema({ 
+    timestamps: true,
+    expires: 86400
+})
 export class WikiStat {
     @Prop({ required: true })
     lang: string;
