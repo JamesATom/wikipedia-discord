@@ -27,14 +27,26 @@ export class DiscordService implements OnModuleInit, OnModuleDestroy {
 
     async onModuleInit() {
         try {
-            await this.client.login(process.env.DISCORD_BOT_TOKEN);
-
             this.client.once('ready', () => {
                 this.logger.log(`Bot logged in as ${this.client.user.tag}`);
+                
+                // Set bot's presence
+                this.client.user.setPresence({
+                    status: 'online',
+                    activities: [{
+                        name: '!help for commands',
+                        type: 0 
+                    }]
+                });
+                
                 this.setupWikiStream();
             });
-
+    
             this.client.on('messageCreate', this.handleMessage.bind(this));
+    
+            await this.client.login(process.env.DISCORD_BOT_TOKEN);
+            this.logger.log('Bot login successful');
+    
         } catch (error) {
             this.logger.error('Failed to initialize bot:', error);
         }
@@ -47,10 +59,8 @@ export class DiscordService implements OnModuleInit, OnModuleDestroy {
         }
         this.wikiStreamSubscriptions.clear();
         
-        // Cleanup Wikipedia service
         this.wikiService.cleanup();
         
-        // Logout Discord client
         await this.client.destroy();
     }
 

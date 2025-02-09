@@ -103,8 +103,8 @@ export class WikipediaService implements OnModuleDestroy {
         await this.wikiStatsService.incrementDailyStats(
             lang,
             event.timestamp,
-            event.user,
-            event.user, 
+            event.user || 'anonymous', 
+            event.user || 'anonymous'
         );
     }
 

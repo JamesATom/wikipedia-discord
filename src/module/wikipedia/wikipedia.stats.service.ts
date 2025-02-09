@@ -15,7 +15,10 @@ export class WikiStatsService {
     async incrementDailyStats(lang: string, timestamp: number, editor: string, displayName: string): Promise<void> {
         const date = new Date(timestamp * 1000);
         date.setHours(0, 0, 0, 0);
-    
+        
+        const safeEditor = editor?.toString() || 'anonymous';
+        const safeDisplayName = displayName?.toString() || safeEditor;
+
         try {
             await this.wikiStatModel.findOneAndUpdate(
                 { lang, date },
